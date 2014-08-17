@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using nobnak.Geometry;
 
 public class MCMC : MonoBehaviour {
 	public const string SHADER_DIST_TEX = "_DistTex";

@@ -2,7 +2,7 @@
 using System.Collections;
 using nobnak.Search;
 
-namespace nobnak.Geometry {
+namespace nobnak.Sampling {
     public class UniformSampler {
         public Mesh M { get; private set; }
 
