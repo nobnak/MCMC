@@ -1,0 +1,3 @@
+[submodule "Assets/nobnak"]
+	path = Assets/nobnak
+	url = git@github.com:nobnak/nobnak.git
