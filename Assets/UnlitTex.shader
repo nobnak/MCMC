@@ -1,24 +1,22 @@
-﻿Shader "Custom/MCMC" {
+﻿Shader "Custom/UnlitTex" {
 	Properties {
-		_MainTex ("Samples", 2D) = "black" {}
-		_DistTex ("Distribution", 2D) = "black" {}
-		_Blend ("Blend", Range(0, 1)) = 0.5
+		_MainTex ("Base (RGB)", 2D) = "white" {}
+		_Color ("Tint", Color) = (1, 1, 1, 1)
 	}
 	SubShader {
 		Tags { "RenderType"="Opaque" }
-		LOD 200
+		LOD 200 ZTest Always ZWrite Off Fog { Mode Off }
+		Blend SrcAlpha One
 		
 		Pass {
 			CGPROGRAM
-			#pragma target 5.0
 			#pragma vertex vert
 			#pragma fragment frag
 			#include "UnityCG.cginc"
 
 			sampler2D _MainTex;
-			sampler2D _DistTex;
-			float _Blend;
-
+			float4 _Color;
+			
 			struct appdata {
 				float4 vertex : POSITION;
 				float2 uv : TEXCOORD0;
@@ -27,7 +25,7 @@
 				float4 vertex : POSITION;
 				float2 uv : TEXCOORD0;
 			};
-
+			
 			vs2ps vert(appdata IN) {
 				vs2ps OUT;
 				OUT.vertex = mul(UNITY_MATRIX_MVP, IN.vertex);
@@ -35,9 +33,8 @@
 				return OUT;
 			}
 			float4 frag(vs2ps IN) : COLOR {
-				float4 s = tex2D(_MainTex, IN.uv);
-				float4 d = tex2D(_DistTex, IN.uv);
-				return _Blend * s + (1 - _Blend) * d;
+				float4 c = tex2D(_MainTex, IN.uv);
+				return c * _Color;
 			}
 			ENDCG
 		}

@@ -34,10 +34,12 @@ namespace nobnak.Sampling {
 
 			for (var i = 0; i < nInitialize; i++)
 				Next();
+
 			for (var i = 0; i < limit; i++) {
 				for (var j = 0; j < nSkip; j++)
 					Next();
-				yield return Next();
+				yield return _curr;
+				Next ();
 			}
 		}
 		
