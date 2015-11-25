@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace nobnak.Sampling {
+namespace MCMCSystem {
 
     public static class BoxMuller {
         public const float TWO_PI = 2f * Mathf.PI;
