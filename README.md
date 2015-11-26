@@ -2,7 +2,7 @@ MCMC (Markov chain Monte Carlo) Sampling Algorithm Asset for Unity
 ====
 [Unity Package](MCMC.unitypackage)
 
- * MCMC Sampler
+ * MCMC Samplig Algorithm
  * Texture2D as Sampling Weight
  * Sampling on Any Mesh
 
