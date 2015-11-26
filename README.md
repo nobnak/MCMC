@@ -1,7 +1,5 @@
-MCMC
+MCMC (Markov chain Monte Carlo) Sampling Algorithm Asset for Unity
 ====
-Markov chain Monte Carlo sampler for Unity
+[Unity Package](MCMC.unitypackage)
 
- * Weightted sampling based on texture
-
-![](Img/ProbTexAndSamplings.png)
+[![Thumbnail](Thumbnail.jpg)](https://vimeo.com/146996554)
