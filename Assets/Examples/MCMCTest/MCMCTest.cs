@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections;
 using MCMCSystem;
 
-public class InstanceGenerator : MonoBehaviour {
+public class MCMCTest : MonoBehaviour {
 	public float height = 1f;
 	public float stddev = 0.01f;
 	public int nInitials = 1000;
