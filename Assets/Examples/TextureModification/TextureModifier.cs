@@ -13,7 +13,7 @@ public class TextureModifier : MonoBehaviour {
 	public Camera targetCamera;
 	public UVWorld uvWorld;
 	public Collider whiteboard;
-	public Transform pinfab;
+	public ParticleSystem shuriken;
 	public Texture2D input;
 	public Texture2D output;
 
@@ -44,29 +44,38 @@ public class TextureModifier : MonoBehaviour {
 		_block.SetTexture(PROP_MAIN_TEX, output);
 		_rnd.SetPropertyBlock(_block);
 		_mcmc = new MCMC(output, stdDev);
+
+		StartCoroutine (Pinning (0.01f, 200));
 	}
 	void Update () {
 		RaycastHit hit;
 		_mousePressed = Input.GetMouseButton(0);
-		if (_mousePressed
-		    && whiteboard.Raycast(targetCamera.ScreenPointToRay(Input.mousePosition), out hit, float.MaxValue)) {
+		if (_mousePressed) {
+			if (whiteboard.Raycast (targetCamera.ScreenPointToRay (Input.mousePosition), 
+			                       out hit, float.MaxValue)) {
+				var mousePosPixel = Vector2.Scale (hit.textureCoord, _texSize);
+				var pixelRadiu = radius * _width;
 
-			var mousePosPixel = Vector2.Scale(hit.textureCoord, _texSize);
-			var pixelRadiu = radius * _width;
+				Parallel.For (0, _pixelCount, (i) => {
+					var y = i / _width;
+					var x = i - y * _width;
+					var currPosPixel = new Vector2 (x, y);
+					var path = currPosPixel - mousePosPixel;
+					var w = Mathf.Lerp (1f, 0f, path.magnitude / pixelRadiu);
 
-			Parallel.For(0, _pixelCount, (i) => {
-				var y = i / _width;
-				var x = i - y * _width;
-				var currPosPixel = new Vector2(x, y);
-				var path = currPosPixel - mousePosPixel;
-				var w = Mathf.Lerp(1f, 0f, path.magnitude / pixelRadiu);
-
-				_outputs[i] = _inputs[i] * w;
-			});
-			output.SetPixels(_outputs);
-			output.Apply();
-		}
-	}
+					_outputs [i] = _inputs [i] * w;
+				});
+				output.SetPixels (_outputs);
+				output.Apply ();
+			}
+		} else {
+			Parallel.For (0, _pixelCount, (i) => {
+				_outputs [i] = Color.clear;
+            });
+            output.SetPixels (_outputs);
+            output.Apply ();      
+        }
+    }
 
 	IEnumerator Pinning(float interval, int count) {
 		while (true) {
@@ -74,17 +83,14 @@ public class TextureModifier : MonoBehaviour {
 			if (!enabled || !_mousePressed)
 				continue;
 
-			foreach (var uv in _mcmc.Sequence(10, count)) {
+			_mcmc.Reset();
+			foreach (var uv in _mcmc.Sequence(100, count)) {
 				Vector3 posLocal;
 				Vector3 normalLocal;
 				if (uvWorld.World(uv, out posLocal, out normalLocal)) {
 					posLocal += (Vector3)(perturbation * Random.insideUnitCircle);
-					var pos = uvWorld.transform.TransformPoint(posLocal);
-					var normal = uvWorld.transform.TransformDirection(normalLocal);
-					var pin = Instantiate(pinfab);
-					pin.SetParent(transform, false);
-					pin.position = pos;
-					pin.forward = normal;
+					var pos = uvWorld.transform.TransformPoint(posLocal) + shuriken.startSize * Vector3.up;
+					shuriken.Emit(pos, Vector3.zero, shuriken.startSize, shuriken.startLifetime, shuriken.startColor);
 				}
 			}
 		}
